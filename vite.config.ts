@@ -4,7 +4,10 @@ import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { defineConfig, loadEnv } from 'vite';
 
 export default defineConfig(({ mode }) => {
-    process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+    process.env = {
+        ...process.env,
+        ...loadEnv(mode, process.cwd(), 'BUILD_VITE')
+    };
 
     return {
         root: 'src',
@@ -28,8 +31,10 @@ export default defineConfig(({ mode }) => {
 
         plugins: [
             sentryVitePlugin({
-                org: process.env.VITE_SENTRY_USERNAME,
-                project: process.env.VITE_SENTRY_PROJECT
+                telemetry: false,
+                authToken: process.env.BUILD_VITE_SENTRY_AUTH_TOKEN,
+                org: process.env.BUILD_VITE_SENTRY_USERNAME,
+                project: process.env.BUILD_VITE_SENTRY_PROJECT
             })
         ]
     };
